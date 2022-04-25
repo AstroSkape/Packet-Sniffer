@@ -6,9 +6,13 @@ import jpcap.packet.Packet;
 import jpcap.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.table.TableModel;
 import javax.xml.bind.DatatypeConverter;
 import java.util.List;
 
@@ -357,11 +361,31 @@ public class PacketSniffer extends javax.swing.JFrame {
         InterfacesWindow nw = new InterfacesWindow();
     }//GEN-LAST:event_listButtonActionPerformed
 
+    private void cacheValues(int val, String s1, String s2, String s3)
+    {
+        String sql = "";
+        try{
+            Connection conn = Connect_db.getConnection();
+            conn.setAutoCommit(true);
+            Statement stmt = conn.createStatement();
+            //String sql = "";
+            sql = "INSERT INTO PACKETS VALUES(" + val + ",'" + s1 + "','" + s2 + "','" + s3 + "');";
+            stmt.executeUpdate(sql);
+        }
+        catch(Exception e)
+        {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+			System.exit(0);
+        }
+        System.out.println(sql);
+    }
+    
+    
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
 
         THREAD = new jpcap_thread() {
             public Object construct() {
-
+                /*
                 writer = null;
                 try {
                     CAP = JpcapCaptor.openDevice(NETWORK_INTERFACES[INDEX], 65535, false, 20);
@@ -373,8 +397,16 @@ public class PacketSniffer extends javax.swing.JFrame {
 
                 for (int i = 0; i < No; i++) {
                     writer.writePacket(packetList.get(i));
+                }*/
+                TableModel m = jTable1.getModel();
+                m.getColumnCount();
+                for(int i=0;i<m.getRowCount();i++)
+                {
+                    System.out.println(m.getValueAt(i, 1));
+                    //cacheValues(Integer.parseInt(m.getValueAt(i, 0).toString()), m.getValueAt(i, 1).toString(), m.getValueAt(i, 2).toString(), m.getValueAt(i, 3).toString());
+                    cacheValues(Integer.parseInt(m.getValueAt(i, 0).toString()), m.getValueAt(i, 1).toString(), m.getValueAt(i, 2).toString(), m.getValueAt(i, 3).toString());
                 }
-
+                
                 return 0;
             }
 
