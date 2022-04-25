@@ -1,7 +1,27 @@
 # Packet-Sniffer
 
-jdk version used - 15, 2020-09-15
+A network packet sniffer capable of sniffing tcp, udp and icmp packets that follows all of the SOLID principles.
+The graphical user interface has been designed to match that of wireshark's.
 
-libraries used - jpcap, jnetpcap, wpcap
+This project is built as part of the OOADJ course at PES University.
+<hr>
 
-Java project as part of 6th semester college course - OOADJ (Object oriented analysis and design using java)
+# Tools Used:
+
+jdk - 15.0.1
+
+jpcap - 0.01.16
+
+winpcap - 4.1.1.3
+<hr>
+
+# Frameworks Used:
+
+swing - desktop gui view
+
+postgres - database
+
+
+
+
+
