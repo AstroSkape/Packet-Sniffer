@@ -4,9 +4,13 @@ import jpcap.JpcapCaptor;
 import jpcap.NetworkInterface;
 import jpcap.packet.Packet;
 import jpcap.*;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -361,6 +365,37 @@ public class PacketSniffer extends javax.swing.JFrame {
         InterfacesWindow nw = new InterfacesWindow();
     }//GEN-LAST:event_listButtonActionPerformed
 
+    public String getHistory() {
+		Connection con = Connect_db.getConnection();
+		String st= "";
+		//int id = 0;
+		//double num1, num2, result;
+		int pno;
+        String length, s_ip, d_ip;
+        Statement stmt = null;
+		try {
+			stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery( "SELECT * FROM PACKETS;" );
+			while ( rs.next() ) {
+				//id++;
+				pno = rs.getInt("pno");
+				length = rs.getString("length");
+				s_ip = rs.getString("s_ip");
+				d_ip  = rs.getString("d_ip");
+				//st = st + id + ") " + num1 + " " + operation + " " + num2 + " = " + result + "\n";
+                st = st + pno + " " + length + " " + s_ip + " " + d_ip + "\n";
+            }
+			rs.close();
+			stmt.close();
+		}
+		catch(Exception e)
+		{
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+		return st;
+	}
+
     private void cacheValues(int val, String s1, String s2, String s3)
     {
         String sql = "";
@@ -379,6 +414,24 @@ public class PacketSniffer extends javax.swing.JFrame {
         }
         System.out.println(sql);
     }
+
+    public void deleteValues()
+	{
+		Connection conn = Connect_db.getConnection();
+		Statement stmt = null;
+		String sql = "";
+		try
+		{
+			stmt = conn.createStatement();
+			sql = "DELETE from packets";
+			stmt.executeUpdate(sql);
+		}
+		catch(Exception e)
+		{
+			System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+			System.exit(0);
+		}
+	}
     
     
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
@@ -400,12 +453,31 @@ public class PacketSniffer extends javax.swing.JFrame {
                 }*/
                 TableModel m = jTable1.getModel();
                 m.getColumnCount();
+                deleteValues();
                 for(int i=0;i<m.getRowCount();i++)
                 {
                     System.out.println(m.getValueAt(i, 1));
                     //cacheValues(Integer.parseInt(m.getValueAt(i, 0).toString()), m.getValueAt(i, 1).toString(), m.getValueAt(i, 2).toString(), m.getValueAt(i, 3).toString());
                     cacheValues(Integer.parseInt(m.getValueAt(i, 0).toString()), m.getValueAt(i, 1).toString(), m.getValueAt(i, 2).toString(), m.getValueAt(i, 3).toString());
                 }
+         
+                String result = getHistory();
+                BufferedWriter out = null;
+
+                try {
+                    FileWriter fstream = new FileWriter("captured_data.txt", true); //true tells to append data.
+                    out = new BufferedWriter(fstream);
+                    out.write(result);
+                }
+                catch (IOException e) {
+                    System.err.println("Error: " + e.getMessage());
+                }
+                try {
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 
                 return 0;
             }
