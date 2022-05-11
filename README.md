@@ -4,7 +4,6 @@ A network packet sniffer capable of sniffing tcp, udp and icmp packets that foll
 The graphical user interface has been designed to match that of wireshark's.
 
 This project is built as part of the OOADJ course at PES University.
-<hr>
 
 # Tools Used:
 
@@ -13,7 +12,6 @@ jdk - 15.0.1
 jpcap - 0.01.16
 
 winpcap - 4.1.1.3
-<hr>
 
 # Frameworks Used:
 
